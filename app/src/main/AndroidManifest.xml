@@ -11,17 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".DisplayList" >
+        <activity android:name=".DisplayList">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".FinalPrice"></activity>
+        <activity android:name=".FinalPrice" />
+        <activity android:name=".Synopsis"></activity>
     </application>
 
 </manifest>

@@ -27,6 +27,7 @@ public class DisplayList extends AppCompatActivity {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Book> arrayList = new ArrayList<>();
+    static ArrayList<Book> purchasedBooks;
     int totalPrice = 0;
 
     String json_url = "http://henri-potier.xebia.fr/books";
@@ -41,8 +42,6 @@ public class DisplayList extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,json_url,(String) null,new Response.Listener<JSONArray>(){
 
             @Override
@@ -54,7 +53,10 @@ public class DisplayList extends AppCompatActivity {
 
                     try {
                         JSONObject jsonObject = response.getJSONObject(count);
-                        Book book = new Book(jsonObject.getString("isbn"),jsonObject.getString("title"),jsonObject.getString("price"),jsonObject.getString("cover"),false);
+
+                        String synopsis = jsonObject.getJSONArray("synopsis").get(0).toString();
+
+                        Book book = new Book(jsonObject.getString("isbn"),jsonObject.getString("title"),jsonObject.getString("price"),jsonObject.getString("cover"),synopsis ,false);
 
                         arrayList.add(book);
                         count++;
@@ -90,6 +92,8 @@ public class DisplayList extends AppCompatActivity {
         String ISBNs="";
         totalPrice = 0;
         boolean noPurchase = false;
+        purchasedBooks  = new ArrayList<>();;
+
 
         for(Book currentBook:RecyclerAdapter.arrayList)
         {
@@ -97,7 +101,7 @@ public class DisplayList extends AppCompatActivity {
             {
                 ISBNs = currentBook.getIsbn()+","+ISBNs;
                 totalPrice = totalPrice + Integer.parseInt(currentBook.getPrice());
-
+                purchasedBooks.add(currentBook);
             }
 
         }
@@ -139,12 +143,10 @@ public class DisplayList extends AppCompatActivity {
                             }
 
 
-                            Log.d("VoDe","Total price before discounts "+totalPrice);
-                            Log.d("VoDe","The deduction is "+deduction);
+
 
                             float payablePrice = (totalPrice -((float)(percentage * totalPrice)/100)) - deduction ;
 
-                            Log.d("VoDe","After percentage and deduction "+payablePrice);
 
                             if(sliceValue>0) {
                                 payablePrice = payablePrice - (totalPrice / sliceValue) * sliceDeduction;
@@ -154,8 +156,6 @@ public class DisplayList extends AppCompatActivity {
                             Intent intent = new Intent(DisplayList.this, FinalPrice.class);
                             intent.putExtra("price",payablePrice);
 
-
-                            Log.d("VoDe","final price "+payablePrice);
 
                             startActivity(intent);
 
@@ -184,5 +184,11 @@ public class DisplayList extends AppCompatActivity {
 
     }
 
+
+    public static ArrayList<Book> getPurchasedBooks(){
+
+        return purchasedBooks;
+
+    }
 
 }
